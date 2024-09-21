@@ -6,15 +6,16 @@ import React, {
   useMemo,
   useContext,
 } from "react";
-import { markDates } from "@/utils/MarkDates";
 import { today } from "@/utils/todat";
 import { useNotifications } from "@/hooks/useNotifications";
-import { TaskDetailType, TaskListType } from "@/constants/DataDummy";
+import { TaskDetailType } from "@/constants/DataDummy";
 import useDataAgenda from "@/hooks/useDataAgenda";
 import useModal from "@/hooks/useModal";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { todoSchema } from "@/schema/todoSchema";
+import { markDates } from "@/utils/MarkDates";
+import { filterTodo } from "@/utils/FilterTodo";
 
 interface AgendaContextType {
   markedDates: { [key: string]: any };
@@ -23,7 +24,6 @@ interface AgendaContextType {
   isLoading: boolean;
   isError: boolean;
   refetch: () => void;
-  filteredItems: TaskListType;
   showNotification: (title: string, message: string) => void;
   modalVisible: boolean;
   setModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
@@ -43,7 +43,25 @@ interface AgendaContextType {
     any,
     undefined
   >;
+  filteredTodos: {
+    title: string;
+    data: {
+      name: string;
+      time: string;
+      status: string;
+    }[];
+  }[];
+  setFiler: React.Dispatch<React.SetStateAction<FilterTodoType>>;
+  filter: FilterTodoType;
 }
+
+type FilterTodoType =
+  | "All"
+  | "By Date"
+  | "Confirmed"
+  | "Pending"
+  | "Cancelled"
+  | "";
 
 const AgendaContext = createContext<AgendaContextType | undefined>(undefined);
 
@@ -52,6 +70,7 @@ export const AgendaProvider = ({ children }: { children: React.ReactNode }) => {
   const [markedDates, setMarkedDates] = useState({});
   const [selectedDate, setSelectedDate] = useState(today);
   const [selectedTask, setSelectedTask] = useState<TaskDetailType | null>(null);
+  const [filter, setFiler] = useState<FilterTodoType>("");
 
   const { modalVisible, setModalVisible } = useModal();
 
@@ -77,15 +96,31 @@ export const AgendaProvider = ({ children }: { children: React.ReactNode }) => {
   });
 
   // filtered todo by the date
-  const filteredItems = useMemo(
+  const todoByDates = useMemo(
     () => filterItemsByDate(items, selectedDate),
     [items, selectedDate, filterItemsByDate]
   );
 
-  // handle to set the selected date
-  const onDayPress = useCallback((day: { dateString: string }) => {
-    setSelectedDate(day.dateString);
-  }, []);
+  const filteredTodos = useMemo(() => {
+    switch (filter) {
+      case "Confirmed":
+        return filterTodo(items, "Confirmed");
+      case "Pending":
+        return filterTodo(items, "Pending");
+      case "Cancelled":
+        return filterTodo(items, "Cancelled").filter(
+          (item) => item.data.length > 0
+        );
+      case "All":
+        return items;
+      case "By Date":
+        return todoByDates;
+      default:
+        return todoByDates;
+    }
+  }, [todoByDates, filter]);
+
+  console.log(filteredTodos);
 
   // handle to set the selected todo
   const handleItemPress = useCallback(
@@ -104,6 +139,11 @@ export const AgendaProvider = ({ children }: { children: React.ReactNode }) => {
     setSelectedTask(null);
     setModalVisible(true);
   }, [setModalVisible]);
+
+  // handle to set the selected date
+  const onDayPress = useCallback((day: { dateString: string }) => {
+    setSelectedDate(day.dateString);
+  }, []);
 
   //   useEffect
   //   mark dates
@@ -168,7 +208,6 @@ export const AgendaProvider = ({ children }: { children: React.ReactNode }) => {
     isLoading,
     isError,
     refetch,
-    filteredItems,
     showNotification,
     modalVisible,
     setModalVisible,
@@ -176,6 +215,9 @@ export const AgendaProvider = ({ children }: { children: React.ReactNode }) => {
     handleAddTodo,
     selectedTask,
     agendaForm,
+    filteredTodos,
+    setFiler,
+    filter,
   };
 
   return (

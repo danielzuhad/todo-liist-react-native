@@ -4,10 +4,9 @@ import tw from "tailwind-react-native-classnames";
 import { SingleInputType } from "./TitleInput";
 import { Controller } from "react-hook-form";
 import SelectDropdown from "react-native-select-dropdown";
-import { StatusTodo } from "@/constants/StatusTodo";
 
 const StatusInput = ({ control, errors }: SingleInputType) => {
-  const statusOptions = Object.values(StatusTodo);
+  const statusOptions = ["Pending", "Confirmed", "Cancelled"];
 
   return (
     <>

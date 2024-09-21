@@ -8,16 +8,16 @@ import ButtonIcon from "../ButtonIcon";
 import { Text } from "react-native";
 import { useAgenda } from "@/context/AgendaContext";
 import { calendarTheme } from "@/constants/CalendarTheme";
+import FilterDropdown from "../FilterDropdown";
 
 const AgendaView = () => {
   const {
     isError,
     isLoading,
-    filteredItems,
+    filteredTodos,
     markedDates,
     onDayPress,
     selectedDate,
-    modalVisible,
     handleAddTodo,
   } = useAgenda();
 
@@ -43,11 +43,14 @@ const AgendaView = () => {
           theme={calendarTheme}
         />
 
+        {/* filter */}
+        <FilterDropdown />
+
         {/* conditional list */}
-        {filteredItems.length === 0 ? (
+        {filteredTodos.length === 0 ? (
           <EmptyAgenda />
         ) : (
-          <AgendaList sections={filteredItems} renderItem={renderItem} />
+          <AgendaList sections={filteredTodos} renderItem={renderItem} />
         )}
 
         {/* modal  */}
