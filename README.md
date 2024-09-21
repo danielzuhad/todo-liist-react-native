@@ -1,5 +1,8 @@
 # Welcome to Todo List App
 
+![image](https://github.com/user-attachments/assets/5879aca3-59d2-4805-aca2-cd3a3135462f)
+
+
 ## Get started
 
 1. Install dependencies
