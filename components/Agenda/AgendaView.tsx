@@ -1,44 +1,28 @@
-import useAgenda from "@/hooks/useAgenda";
 import React, { useCallback } from "react";
 import { AgendaList, Calendar, CalendarProvider } from "react-native-calendars";
 import EmptyAgenda from "./EmptyAgenda";
 import AgendaItem from "./AgendaItem";
 import tw from "tailwind-react-native-classnames";
-import useModal from "@/hooks/useModal";
 import ModalTodo from "../ModalTodo";
 import ButtonIcon from "../ButtonIcon";
 import { Text } from "react-native";
+import { useAgenda } from "@/context/AgendaContext";
+import { calendarTheme } from "@/constants/CalendarTheme";
 
 const AgendaView = () => {
   const {
-    markedDates,
-    selectedDate,
-    onDayPress,
     isError,
     isLoading,
-    refetch,
     filteredItems,
-    showNotification,
-  } = useAgenda();
-
-  const {
-    setModalVisible,
+    markedDates,
+    onDayPress,
+    selectedDate,
     modalVisible,
     handleAddTodo,
-    handleItemPress,
-    selectedTask,
-  } = useModal();
+  } = useAgenda();
 
   const renderItem = useCallback(({ item }: any) => {
-    return (
-      <AgendaItem
-        showNotification={showNotification}
-        selectedDate={selectedDate}
-        refetch={refetch}
-        onPress={() => handleItemPress(item)}
-        item={item}
-      />
-    );
+    return <AgendaItem item={item} />;
   }, []);
 
   if (isLoading) {
@@ -53,11 +37,10 @@ const AgendaView = () => {
     <>
       <CalendarProvider date={selectedDate} style={tw`flex-1 relative`}>
         <Calendar
-          style={{
-            marginBottom: 20,
-          }}
+          style={tw`mb-5`}
           markedDates={markedDates}
           onDayPress={onDayPress}
+          theme={calendarTheme}
         />
 
         {/* conditional list */}
@@ -68,13 +51,7 @@ const AgendaView = () => {
         )}
 
         {/* modal  */}
-        <ModalTodo
-          refetch={refetch}
-          selectedDate={selectedDate}
-          setModalVisible={setModalVisible}
-          visible={modalVisible}
-          editItem={selectedTask}
-        />
+        <ModalTodo />
 
         {/* button toggle modal */}
         <ButtonIcon size={16} setModalVisible={handleAddTodo} />

@@ -4,6 +4,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import tw from "tailwind-react-native-classnames";
 import AgendaView from "@/components/Agenda/AgendaView";
+import { AgendaProvider } from "@/context/AgendaContext";
 
 export default function HomeScreen() {
   return (
@@ -14,7 +15,9 @@ export default function HomeScreen() {
         </ThemedText>
       </ThemedView>
 
-      <AgendaView />
+      <AgendaProvider>
+        <AgendaView />
+      </AgendaProvider>
     </SafeAreaView>
   );
 }

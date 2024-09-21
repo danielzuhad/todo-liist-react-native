@@ -22,9 +22,11 @@ const TimeInput = ({
           )}
         </View>
       </Pressable>
-      <Text style={tw`text-black text-lg font-semibold`}>
-        {getValues("time")}
-      </Text>
+      <Pressable onPress={showDatePicker}>
+        <Text style={tw`text-black text-lg font-semibold`}>
+          {getValues("time")}
+        </Text>
+      </Pressable>
     </View>
   </View>
 );

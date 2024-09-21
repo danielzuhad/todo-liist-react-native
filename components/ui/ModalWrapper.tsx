@@ -16,7 +16,9 @@ const ModalWrapper = ({ visible, onClose, children }: Props) => {
       transparent
       visible={visible}
     >
-      <View style={tw`flex-1  items-center justify-center `}>
+      <View
+        style={tw`flex-1 bg-black bg-opacity-60  items-center justify-center `}
+      >
         <View
           style={tw`w-3/4 h-1/3 border border-gray-300 bg-white flex p-4 rounded-2xl shadow-sm relative`}
         >

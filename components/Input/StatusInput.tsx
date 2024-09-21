@@ -30,9 +30,15 @@ const StatusInput = ({ control, errors }: SingleInputType) => {
               dropdownStyle={tw`rounded-md`}
               renderButton={(selectedItem, placeholder) => (
                 <View
-                  style={tw`p-2 bg-white border border-gray-300 rounded-md`}
+                  style={tw`p-2 bg-white border border-gray-300 rounded-md w-24 flex flex-row items-center justify-center
+                    ${value === "Cancelled" ? "bg-red-500" : ""} 
+                    ${value === "Confirmed" ? "bg-green-500" : ""}
+                    ${value === "Pending" ? "bg-yellow-500" : ""}
+                    `}
                 >
-                  <Text>{selectedItem || placeholder}</Text>
+                  <Text style={tw`text-white`}>
+                    {selectedItem || placeholder}
+                  </Text>
                 </View>
               )}
               renderItem={(item, index) => (

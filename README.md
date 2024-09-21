@@ -1,6 +1,4 @@
-# Welcome to your Expo app 👋
-
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+# Welcome to Todo List App
 
 ## Get started
 
@@ -16,35 +14,28 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
     npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+Info :
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+<!-- COntext -->
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- Context API: State management dilakukan melalui React Context (AgendaContext), yang memfasilitasi akses dan manipulasi state lintas komponen tanpa perlu prop-drilling yang berlebihan.
 
-## Get a fresh project
+<!-- Hooks -->
 
-When you're ready, run:
+- Custom Hooks: mengimplementasikan custom hooks seperti useAgenda dan useModal untuk mengenkapsulasi logika state dan efek samping, sehingga komponen utama lebih fokus pada tugas rendering UI.
 
-```bash
-npm run reset-project
-```
+<!-- Styling -->
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+- Styling diimplementasikan dengan Tailwind CSS menggunakan tailwind-react-native-classnames, yang menyediakan utilitas yang konsisten dan cepat
 
-## Learn more
+<!-- Calendat -->
 
-To learn more about developing your project with Expo, look at the following resources:
+- Aplikasi ini menampilkan navigasi berbasis tanggal menggunakan komponen seperti Calendar dan AgendaList dari react-native-calendars, yang memudahkan pengguna dalam melihat dan mengelola tugas berdasarkan hari tertentu.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+<!-- Validasi FOrmulir -->
 
-## Join the community
+- menggunakan react-hook-form bersama dengan zod untuk validasi schema
 
-Join our community of developers creating universal apps.
+<!-- NOtifikasi -->
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- mengintegrasikan notifikasi untuk meningkatkan interaktivitas

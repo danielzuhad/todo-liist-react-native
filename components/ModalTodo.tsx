@@ -1,63 +1,54 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Button, Text, View } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import ButtonIcon from "./ButtonIcon";
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller } from "react-hook-form";
 import { todoSchema } from "@/schema/todoSchema";
 import useTime from "@/hooks/useTime";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { format } from "date-fns";
 import { z } from "zod";
-import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
 import ModalWrapper from "./ui/ModalWrapper";
-import { TaskDetailType } from "@/constants/DataDummy";
 import TitleInput from "./Input/TitleInput";
 import TimeInput from "./Input/TimeInput";
 import { addTodo, updateTodo } from "@/utils/storage";
 import StatusInput from "./Input/StatusInput";
+import { useAgenda } from "@/context/AgendaContext";
 
-interface ModalTodoProps {
-  visible: boolean;
-  setModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedDate: string;
-  refetch: (
-    options?: RefetchOptions
-  ) => Promise<QueryObserverResult<any, Error>>;
-  editItem?: TaskDetailType | null;
-}
+interface ModalTodoProps {}
 
-const ModalTodo = ({
-  visible,
-  setModalVisible,
-  selectedDate,
-  refetch,
-  editItem,
-}: ModalTodoProps) => {
+const ModalTodo = ({}: ModalTodoProps) => {
   const { hideDatePicker, isDatePickerVisible, showDatePicker } = useTime();
+
+  const {
+    selectedDate,
+    refetch,
+    setModalVisible,
+    modalVisible,
+    selectedTask,
+    showNotification,
+    agendaForm,
+  } = useAgenda();
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    setValue,
+    getValues,
+    formState: { errors },
+  } = agendaForm;
 
   const closeModal = () => {
     setModalVisible(false);
     reset();
   };
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    watch,
-    getValues,
-    reset,
-    setValue,
-  } = useForm({
-    resolver: zodResolver(todoSchema),
-    defaultValues: {
-      title: editItem?.name || "",
-      time: editItem?.time || "",
-      status: editItem?.status || "Pending",
-    },
-  });
-
+  /**
+   * Handles the submission of the todo form. If the todo is being edited (i.e. `selectedTask` is truthy),
+   * it will be updated, otherwise a new todo will be added.
+   * @param formData The validated form data.
+   */
   const onSubmit = async (formData: z.infer<typeof todoSchema>) => {
     const todoData = {
       name: formData.title,
@@ -65,35 +56,35 @@ const ModalTodo = ({
       status: formData.status,
     };
 
-    if (editItem) {
-      await updateTodo(selectedDate, editItem.name, todoData);
+    if (selectedTask) {
+      await updateTodo(selectedDate, selectedTask.name, todoData);
+      showNotification(
+        "Todo Updated",
+        `"${selectedTask.name}" has been updated.`
+      );
     } else {
       await addTodo({
         title: selectedDate,
         data: todoData,
       });
+      showNotification("Todo Added", `"${todoData.name}" has been added.`);
     }
 
     refetch();
     closeModal();
   };
 
-  useEffect(() => {
-    if (editItem) {
-      setValue("title", editItem.name);
-      setValue("time", editItem.time);
-      setValue("status", editItem.status);
-    }
-  }, [editItem, setValue, reset, visible]);
-
   return (
     <>
-      <ModalWrapper visible={visible} onClose={() => setModalVisible(false)}>
+      <ModalWrapper
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+      >
         <ButtonIcon setModalVisible={closeModal} size={12} variant="cross" />
 
         <View style={tw`mb-2`}>
           <Text style={tw`text-lg font-bold`}>
-            {editItem ? "Edit Todo" : "Add Todo"}
+            {selectedTask ? "Edit Todo" : "Add Todo"}
           </Text>
         </View>
 
@@ -111,8 +102,9 @@ const ModalTodo = ({
             />
 
             {/* status */}
-            {editItem && <StatusInput control={control} errors={errors} />}
+            {selectedTask && <StatusInput control={control} errors={errors} />}
 
+            {/* time */}
             <Controller
               control={control}
               name="time"
@@ -134,7 +126,7 @@ const ModalTodo = ({
           </View>
 
           <Button
-            title={editItem ? "Edit Todo" : "Add Todo"}
+            title={selectedTask ? "Edit Todo" : "Add Todo"}
             onPress={handleSubmit(onSubmit)}
           />
         </View>
